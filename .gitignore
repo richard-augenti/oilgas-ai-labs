@@ -8,6 +8,11 @@ credentials
 *.pem
 *.key
 
+# ---- Infrastructure: kept local, not published ----
+# The training environment is provisioned from a local working copy of infra/.
+# This repo stays focused on the labs themselves.
+infra/
+
 # ---- Terraform ----
 .terraform/
 *.tfstate
@@ -15,8 +20,6 @@ credentials
 *.tfvars
 !*.tfvars.example
 crash.log
-# .terraform.lock.hcl is intentionally NOT ignored — it pins provider versions
-# so every delivery of this training provisions an identical environment.
 
 # ---- Large / derived lab data ----
 # Learner datasets are downloaded from their original source, not vendored here.
