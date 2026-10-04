@@ -28,6 +28,13 @@ crash.log
 *.parquet
 *.las
 
+# ---- Lecture deck: kept local, not published ----
+# The training deck is Richard's own material and stays out of the repo.
+*.pptx
+*.ppt
+*.pptm
+*.odp
+
 # ---- OS / editor ----
 .DS_Store
 Thumbs.db
