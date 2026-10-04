@@ -1,85 +1,114 @@
-# Lab 1 — Drilling performance & data quality
+# Lab 1 — Can We Trust the Lithology Model?
 
-**Status:** dataset researched and verified; selection **not yet confirmed**. No worksheet written yet.
+**Maps to:** Module 3.2, *Geological and Petrophysical Modeling* (deck slides 21–40, specifically
+25–30 lithology and facies prediction).
 
-Learning objective: learners decide what an AI drilling-advisory system *should* have recommended on
-a real well — and where it would have been wrong. The lesson is judgment about data and decisions,
-not model training.
+**Format:** Jupyter notebook, run in SageMaker. Learners run cells and interpret; they do not write
+code.
 
-## Selected dataset (recommended, pending confirmation)
+**Duration:** ~28 minutes.
 
-**Utah FORGE — Well 58-32 Processed Pason Log**
+## The lab in one line
+
+A vendor's lithology model scores **84.3%** on a blind well and **misses 62% of the sandstone**.
+Learners decide whether to sign off on it.
+
+## Why this works
+
+The result is real and it is the whole lesson. Measured on the held-out well `25/8-5 S`:
 
 | | |
+|---|---:|
+| "Always predict Shale" baseline | **78.7%** |
+| Random forest | **84.3%** |
+| Improvement over doing nothing | **+5.6 pp** |
+| Sandstone **precision** | **0.98** |
+| Sandstone **recall** | **0.38** |
+| Real sandstone samples missed | **769 of 1,245 (62%)** |
+| — called Shale | 513 |
+| — called Sandstone/Shale | 256 |
+| Tuff (293 samples) | **0.00 — never found** |
+
+84.3% sounds like a working model. It finds barely a third of the reservoir rock, and when it is
+wrong it says *shale* — the one error that makes you walk past pay.
+
+The precision/recall split is the teaching moment: **trust it when it says sandstone; do not trust
+it when it says there is none.** A single accuracy figure hides both facts.
+
+## Files
+
+| File | Purpose |
 |---|---|
-| Landing page | https://gdr.openei.org/submissions/1113 |
-| Direct file | `https://gdr.openei.org/files/1113/Well_58-32_processed_pason_log.csv` |
-| Source | Idaho National Laboratory / Geothermal Data Repository (US DOE); contributors EGI, Univ. of Utah |
-| License | **CC BY 4.0** — page metadata states `"isAccessibleForFree": true`. No login or registration. |
-| DOI | https://doi.org/10.15121/1495411 |
-| Size | 1.24 MB · **7,310 data rows × 27 columns** · depth 85–7,536 ft |
+| `lithology_lab.ipynb` | The lab. 32 cells, executed end-to-end and verified. |
+| `data/well_logs_lab.csv` | 41,596 rows, 7 wells, 3.5 MB |
+| `data/ATTRIBUTION.md` | FORCE 2020 citation, licence, and exactly how the subset was built |
 
-Verified by download on 2026-10-04. Expected header:
+## Data
 
-```
-Depth(ft), Depth(m), ROP(1 ft), ROP(1 m), weight on bit (k-lbs), weight on bit (kg),
-Temp Out( degF), Temp Out( degC), Temp In(degF), Temp In(degC), Pit Total (bbls),
-Pit Total (m3), Pump Press (psi), Pump Press (KPa), Hookload (k-lbs), Hookload (kg),
-Surface Torque (psi), Surface Torque (KPa), Rotary Speed (rpm), Flow In (gal/min),
-Flow In(liters/min), Flow Out %, WH Pressure (psi), WH Pressure (KPa),
-H2S Floor, H2S Cellar, H2S Pits
-```
+FORCE 2020, Norwegian Continental Shelf. Logs under NLOD 2.0, labels under CC BY 4.0 — both permit
+redistribution with attribution, so the subset is committed rather than downloaded live. Six
+training wells and one blind test well, all from quadrant 25 so the test well has real geological
+analogues.
 
-**Do not download `Well 58-32 Raw Pason Log.csv`** — it is 603 MB at 1 Hz and will not open in Excel.
+> **Say this out loud:** these are **North Sea** wells, not US. The lesson transfers; the
+> stratigraphy is not Permian or Gulf Coast. The nearest US dataset with core-derived facies labels
+> is Kansas/Panoma Council Grove, which its own repository states is **not openly licensed**.
 
-### Known caveats — state these to learners
+## Timing
 
-- **This is a geothermal well, not an oil & gas well.** The rig, the Pason EDR, the channels, and the
-  drilling physics transfer directly; the formation and the objective do not. Say so in one sentence
-  rather than letting someone notice.
-- **Depth-indexed, not time-stamped.** There is no timestamp column. Frame this as depth-based
-  drilling performance, not a real-time time-series exercise.
-- **No event labels.** Nobody can check their answer — which is precisely the position most
-  operators are in when evaluating a predictive drilling product. This is the debrief hook.
+| Min | Segment |
+|---:|---|
+| 3 | Set up: you are reviewing a vendor model before it enters your workflow |
+| 5 | Steps 1–2 — what is in the data, what do the logs look like |
+| 4 | Step 3 — train, see 84.3%, **commit to a yes/no before proceeding** |
+| 4 | Step 4 — compare against the always-Shale baseline |
+| 6 | Step 5 — per-class results, the sandstone reveal, where it fails in depth |
+| 3 | Step 6 — group decision |
+| 3 | Debrief |
+| **28** | |
 
-### Verified data defects (these drive the lab, don't fix them silently)
+## Facilitation
 
-| Column | Finding |
-|---|---|
-| `WH Pressure (psi)` | Range −1,231.8 to 17.4, mean −35.8. **Unusable.** Keep as bait or delete. |
-| `Flow Out %` | Range 0.69–111.21; **5,831 of 7,310 rows below 90%**. Baseline is ~80%, not 100%. |
-| `weight on bit (k-lbs)` | 198 zero rows (off-bottom) — must filter before ROP correlation |
-| `Rotary Speed (rpm)` | 380 zero rows |
-| `ROP(1 ft)` | Max 2,977.91 ft/hr; 43 rows above 500 — implausible spikes |
-| `Depth(ft)` | **Not strictly monotonic** — reaming intervals re-cover depth. Pre-sort or scope to a clean window. |
+Four marked **⏸ Discuss** stops. The one that matters is after the classification report.
 
-## Lab concept (~40 min)
+**Make them commit before Step 4.** Ask for hands on "would you deploy this?" right after the 84.3%
+appears. The lab only works if they have publicly backed a position before the baseline comparison
+undercuts it.
 
-1. **Trust the data before the model (~8 min)** — learners find the three defects themselves: the dead
-   `WH Pressure` channel, off-bottom rows where WOB/RPM are zero, and implausible ROP spikes.
-2. **Which parameters actually drive ROP? (~10 min)** — scatter ROP against WOB, torque, RPM, and pump
-   pressure on filtered on-bottom rows; eyeball which relationships are real.
-3. **The returns-deficit judgment call (~12 min)** — flag rows where `Flow Out %` is low and
-   `Pit Total` is falling. Learners discover the ~80% baseline means a naive threshold alarm fires
-   thousands of times, and must set a rule they'd actually put on a rig floor.
-4. **Decision and defence (~10 min)** — each group commits to one written recommendation plus the one
-   piece of evidence that would change their mind.
+**Expect the room to split** on precision vs. recall. Explorationists usually say missing pay is
+worse. Drilling and completions people sometimes argue false positives cost more. Both are right —
+it depends on the decision the model feeds. Do not resolve it; that *is* the point.
 
-**Deliberately out of scope:** model training, Python, accuracy metrics.
+**If a group finishes early**, send them to the optional cell. Rebalancing lifts sandstone recall
+from 0.38 to 0.42 and barely moves accuracy — the fix is not a hyperparameter.
 
-## Instructor pre-work
+## Debrief — intended learning points
 
-- Pre-sort by depth (the column is not monotonic as shipped)
-- Delete the duplicate SI columns so learners aren't choosing between unit systems
-- Decide whether to leave `WH Pressure` in as deliberate bait
+1. **An accuracy number can be nearly useless.** 84.3% against a 78.7% do-nothing baseline is a
+   5.6-point gain, and the model still misses most of the reservoir.
+2. **Precision and recall answer different questions**, and which one matters depends on the
+   decision downstream — not on the model.
+3. **Class imbalance is a geological fact, not a data defect.** Shale dominates because shale
+   dominates. The rare classes are often the interesting ones.
+4. **Data availability constrains the model before anyone writes code.** PEF — one of the best
+   lithology discriminators — is missing from 23.5% of the data. Deck slide 24: *"AI models are
+   only as effective as the quality and diversity of input data."*
+5. **Generalising to a new well is the real test.** Train and test on the same well and this looks
+   excellent. The blind well is where it falls over, and that is the only evaluation that reflects
+   how the model would actually be used.
+6. **Where the geoscientist is mandatory.** The model cannot tell you it missed the pay. Catching
+   that needs someone who knows what the sand should look like — and knows which *evidence* to go
+   and get. Deck slide 39: *"combining AI outputs with geological expertise."*
 
-## Alternatives evaluated
+## Design notes
 
-| Dataset | Verdict |
-|---|---|
-| [Petrobras 3W v1.1.1](https://github.com/petrobras/3W/tree/v1.1.1/dataset) | CC BY 4.0, real offshore oil wells, **has event labels**, 10,750 rows. Best fallback if oil-well provenance matters more than drilling relevance — but it is production/well-integrity, not drilling. Pin tag `v1.1.1`; v2.0.0 is Parquet. |
-| [Utah FORGE Well 16A(78)-32](https://gdr.openei.org/submissions/1283) | CC BY 4.0, 36 channels incl. real `Time`, `RigEventCode`, downhole torque. **113 MB** — Power BI only, needs instructor pre-trim. |
-| [FORCE 2020 well logs](https://zenodo.org/records/4351156) | NLOD 2.0 + CC BY 4.0. Well-log/lithofacies option. `train.zip` is ~1.17M rows — **exceeds Excel's row limit**; CSVs are semicolon-delimited. |
-| Equinor Volve | Equinor Open Data Licence but **now requires a Databricks account**; real-time drilling is WITSML. Schedule risk. |
-| Kansas / Panoma `facies_vectors.csv` | ❌ **Rejected.** Repo states the dataset "is not openly licensed... treat it as proprietary." Fails the license constraint despite being widely recommended. |
-| North Dakota DMR production | ❌ **Rejected.** Site states "no link to an excel document is available" — PDF only. |
+So these are not "corrected" later by mistake:
+
+- **The test well was chosen deliberately.** Quadrant-matched training wells make the model
+  credible (it beats the baseline) while still failing instructively. An earlier pairing with
+  non-analogue wells scored *below* the baseline — which teaches "ML doesn't work," the wrong
+  lesson.
+- **Only the five complete curves are used** (GR, RHOB, NPHI, RDEP, DTC). PEF is deliberately left
+  in the CSV, and visibly incomplete, to drive the data-quality discussion.
+- **Every number above was produced by executing the notebook**, not estimated. If the data or the
+  model parameters change, re-run and update this file.

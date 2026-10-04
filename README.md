@@ -19,24 +19,27 @@ Each lab must satisfy all of the following:
 | Data | Real or realistic operational variables — not a narrative case study |
 | License | Freely and legally usable for education, with clear stated terms |
 | Format | CSV / XLSX / plain downloadable text |
-| Tooling | Excel, Sheets, or Power BI only — no Petrel, OpendTect, Kingdom, or Python |
-| Duration | A decision-oriented exercise completable in 30–45 minutes |
-| Honesty | No fabricated values, wells, or scenarios |
+| Tooling | Jupyter on SageMaker, or Excel / Sheets / Power BI. No Petrel, OpendTect, or Kingdom. |
+| Code | Learners **run and interpret** code; they are not asked to write it |
+| Duration | A decision-oriented exercise completable in ~28 minutes |
+| Honesty | No fabricated values, wells, or scenarios. Every reported result is produced by executing the lab. |
 
 ## Labs
 
 | Lab | Topic | Status |
 |---|---|---|
-| [lab1](./lab1) | Drilling performance & data quality | Dataset researched and verified — **pending final confirmation** |
+| [lab1](./lab1) | Lithology prediction from well logs (Module 3.2) | **Built** — notebook + data, verified end-to-end |
 | [lab2](./lab2) | — | Not yet designed |
 | [lab3](./lab3) | — | Not yet designed |
 | [lab4](./lab4) | — | Not yet designed |
 
 ## Datasets
 
-Datasets are **not vendored into this repository**. Each lab's README gives the verified direct
-download link, the source organization, the license, and the exact file to retrieve. This keeps the
-repo small and keeps attribution attached to the data rather than buried in a commit.
+Small, openly licensed datasets are **committed alongside the lab** in `labN/data/`, with an
+`ATTRIBUTION.md` recording the citation, licence, and exactly how the subset was derived. Shipping
+the data removes the single biggest live-delivery risk — a source site being slow or down mid-session.
+
+Anything above ~10 MB, or without redistribution rights, stays a documented download link instead.
 
 ## Repository conventions
 
