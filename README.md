@@ -31,7 +31,7 @@ Each lab must satisfy all of the following:
 | [lab1](./lab1) | Lithology prediction from well logs (Module 3.2) | **Built** — notebook + data, verified end-to-end |
 | [lab2](./lab2) | ROP prediction & drilling optimization (Modules 4.1–4.2) | **Built** — notebook + data, verified end-to-end |
 | [lab3](./lab3) | Production forecasting: decline curves vs ML (Module 3.3) | **Built** — notebook + data, verified end-to-end |
-| [lab4](./lab4) | — | Not yet designed |
+| [lab4](./lab4) | AI drilling copilot & autonomy levels (Module 4.3) | **Built** — notebook + data, verified end-to-end |
 
 ## Datasets
 
