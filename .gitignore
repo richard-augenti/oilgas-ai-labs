@@ -1,0 +1,37 @@
+# ---- Secrets: never commit ----
+.env
+.env.*
+!.env.example
+terraform_accessKeys.csv
+*accessKeys*.csv
+credentials
+*.pem
+*.key
+
+# ---- Terraform ----
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.terraform.lock.hcl
+crash.log
+
+# ---- Large / derived lab data ----
+# Learner datasets are downloaded from their original source, not vendored here.
+# See each lab's README for the download link and license.
+*.zip
+*.parquet
+*.las
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# ---- Office lock files ----
+~$*.xlsx
+~$*.docx
+~$*.pptx
