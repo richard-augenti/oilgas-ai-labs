@@ -14,8 +14,9 @@ credentials
 *.tfstate.*
 *.tfvars
 !*.tfvars.example
-.terraform.lock.hcl
 crash.log
+# .terraform.lock.hcl is intentionally NOT ignored — it pins provider versions
+# so every delivery of this training provisions an identical environment.
 
 # ---- Large / derived lab data ----
 # Learner datasets are downloaded from their original source, not vendored here.
