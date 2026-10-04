@@ -29,7 +29,7 @@ Each lab must satisfy all of the following:
 | Lab | Topic | Status |
 |---|---|---|
 | [lab1](./lab1) | Lithology prediction from well logs (Module 3.2) | **Built** — notebook + data, verified end-to-end |
-| [lab2](./lab2) | — | Not yet designed |
+| [lab2](./lab2) | ROP prediction & drilling optimization (Modules 4.1–4.2) | **Built** — notebook + data, verified end-to-end |
 | [lab3](./lab3) | — | Not yet designed |
 | [lab4](./lab4) | — | Not yet designed |
 
